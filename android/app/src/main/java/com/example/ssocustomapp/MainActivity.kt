@@ -1,6 +1,6 @@
 package com.example.ssocustomapp
 
-import com.doters.ssosdk.models.Introspection // Modelo de datos de la Introspección (Verificación de token)
+import com.doters.ssosdk.models.IntrospectionData // Modelo de datos de la Introspección (Verificación de token)
 import com.doters.ssosdk.models.RefreshToken // Modelo de datos del refresh token
 import com.doters.ssosdk.models.UserInfoData // Modelo de datos de la información de usuario
 import com.doters.ssosdk.models.LoginData // Modelo de datos de los datos de respuesta del login
@@ -141,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                     * success: bandera boolean que indica si fue exitosa o no la respuesta del método
                     * data: Información del estatus del token, puede ser null
                     */
-                    override fun processFinish(success: Boolean, data: Introspection?) {
+                    override fun processFinish(success: Boolean, data: IntrospectionData?) {
                         switchSpinner(false)
                         if(success) {
                             val responseStr = data.toString()
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                     * success: bandera boolean que indica si fue exitosa o no la respuesta del método
                     * data: Información del token actualizado, puede ser null
                     */
-                    override fun processFinish(success: Boolean, data: RefreshToken?) {
+                    override fun processFinish(success: Boolean, data: LoginData?) {
                         switchSpinner(false)
                         if(success) {
                             val responseStr = data.toString()
