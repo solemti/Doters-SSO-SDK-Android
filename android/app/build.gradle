@@ -44,7 +44,7 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.0'
 
-    implementation 'com.github.jmickDev:test_ssosdk:1.0.11'
+    implementation 'com.github.solemti:Doters-SSO-SDK-Android:1.1.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
