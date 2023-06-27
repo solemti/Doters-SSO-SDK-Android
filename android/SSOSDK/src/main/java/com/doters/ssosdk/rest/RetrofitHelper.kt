@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitHelper {
     fun getInstance(apiUrl: String): Retrofit {
-        val baseUrl = "$apiUrl/v1/"
+        val baseUrl = "$apiUrl"
 
         return Retrofit.Builder().baseUrl(baseUrl)
             //.addConverterFactory(ScalarsConverterFactory.create())
