@@ -32,9 +32,9 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
 
     // URL para carga del SSO Login
     private var SSO_url =
-        "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri=$schemeInit&state=$stateInit"
+        "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://login&state=$stateInit"
     // URL para carga del SSO Logout
-    private var SSO_url_logout = apiUrlInit+"/v1/logout?post_logout_redirect_uri="+schemeInit+"logout&client_id="+clientIdInit
+    private var SSO_url_logout = urlInit+"/logout?post_logout_redirect_uri="+schemeInit+"://logout&client_id="+clientIdInit
 
     private val sdkUtils: Utils = Utils()
 
@@ -61,21 +61,27 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
 
     // Metodo de SDK para login
     fun signIn(context: Context){
-        logger.info { "Starting doters sso login" }
+        logger.info { "Starting doters sso login v2" }
         loadSSO(this.SSO_url, context);
     }
 
     // Metodo de SDK para login
     fun logOut(context: Context){
-        logger.info { "Starting doters sso logout" }
+        logger.info { "Starting doters sso logout v2" }
         loadSSO(this.SSO_url_logout, context);
     }
 
     fun userInfo(accessToken: String, callback: UserInfoCallback) {
         val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)
 
+        val headers: Map<String, String> = mapOf(
+            "Authorization" to "Bearer " + accessToken,
+            "Content-Type" to "application/json",
+            "X-Channel" to "android"
+        )
+
         GlobalScope.launch {
-            val response = SSOApi.getUserInfo("Bearer " + accessToken)
+            val response = SSOApi.getUserInfo(headers)
             if (response != null) {
                 // Checking the results
                 if(response.isSuccessful) {
@@ -99,7 +105,11 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     @RequiresApi(Build.VERSION_CODES.O)
     fun refreshToken(refreshToken: String, callback: RefreshTokenCallback) {
         val basicToken: String = sdkUtils.generateBasicToken(this.clientIdInit, this.clientSecretInit)
-        val headers: Map<String, String> = mapOf("Authorization" to "Basic " + basicToken, "Content-Type" to "application/x-www-form-urlencoded")
+        val headers: Map<String, String> = mapOf(
+            "Authorization" to "Basic " + basicToken,
+            "Content-Type" to "application/x-www-form-urlencoded",
+            "X-Channel" to "android"
+        )
 
         val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)
 
@@ -132,7 +142,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         val basicToken: String = sdkUtils.generateBasicToken(this.clientIdInit, this.clientSecretInit)
         val headers: Map<String, String> = mapOf(
             "Authorization" to "Basic " + basicToken,
-            "Content-Type" to "application/x-www-form-urlencoded"
+            "Content-Type" to "application/x-www-form-urlencoded",
+            "X-Channel" to "android"
         )
 
         val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)

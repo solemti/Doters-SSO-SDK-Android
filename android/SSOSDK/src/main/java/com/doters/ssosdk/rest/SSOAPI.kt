@@ -6,7 +6,7 @@ import retrofit2.http.*
 
 interface SSOAPI {
     @GET("user")
-    suspend fun getUserInfo(@Header("Authorization") AuthToken: String) : Response<UserInfoRequest>
+    suspend fun getUserInfo(@HeaderMap headers: Map<String, String>) : Response<UserInfoRequest>
 
     @FormUrlEncoded
     @POST("token/introspection")

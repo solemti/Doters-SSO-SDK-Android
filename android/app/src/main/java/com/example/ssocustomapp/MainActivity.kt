@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     // params de urls de login y logout (información solo de prueba)
-    private val scheme: String = "<SCHEME>" // Scheme con el que esta identificada la app appscheme://
+    private val scheme: String = "<SCHEME>" // Scheme con el que esta identificada la app appscheme
     private val url: String = "<HOST-DOTERS>" // URL de cliente web del SSO https://domain.ex
     private val apiUrl: String = "<HOST-DOTERS>"    // Host de API para hacer logout y consumir servicios de userInfo,
                                                     // introspection y refreshToken https://domain.example
@@ -176,6 +176,7 @@ class MainActivity : AppCompatActivity() {
                         switchSpinner(false)
                         if(success) {
                             val responseStr = data.toString()
+                            parsedlData = data!!
                             binding.root.findViewById<TextView>(R.id.callback_response).setText(responseStr)
                         } else {
                             println("=====> No fue posible actualizar token!!!")
