@@ -33,8 +33,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     // URL para carga del SSO Login
     private var SSO_url =
         "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://login&state=$stateInit"
-    // URL para carga del SSO SingUp
-    private var SSO_url_sing_up =
+    // URL para carga del SSO SignUp
+    private var SSO_url_sign_up =
         "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://login&go_to_page=signup&state=$stateInit"
     // URL para carga del SSO Logout
     private var SSO_url_logout = urlInit+"/logout?post_logout_redirect_uri="+schemeInit+"://logout&client_id="+clientIdInit
@@ -69,7 +69,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     }
     fun signUp(context: Context){
         logger.info { "Starting doters sso signUp" }
-        loadSSO(this.SSO_url_sing_up, context);
+        loadSSO(this.SSO_url_sign_up, context);
     }
     // Metodo de SDK para login
     fun logOut(context: Context){
