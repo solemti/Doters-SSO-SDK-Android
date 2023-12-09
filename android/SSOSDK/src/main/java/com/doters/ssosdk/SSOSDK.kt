@@ -39,6 +39,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     // URL para carga del SSO Logout
     private var SSO_url_logout = urlInit+"/logout?post_logout_redirect_uri="+schemeInit+"://logout&client_id="+clientIdInit
 
+    private var SSO_url_editProfile = urlInit+"/profile/edit?redirectUri="+schemeInit+"://login"
+
     private val sdkUtils: Utils = Utils()
 
     // Instanciación de las customTabs
@@ -70,6 +72,10 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     fun signUp(context: Context){
         logger.info { "Starting doters sso signUp" }
         loadSSO(this.SSO_url_sign_up, context);
+    }
+    fun editProfile(context: Context){
+        logger.info { "Starting doters sso signUp" }
+        loadSSO(this.SSO_url_editProfile, context);
     }
     // Metodo de SDK para login
     fun logOut(context: Context){
@@ -156,7 +162,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
 
         GlobalScope.launch {
             val response = SSOApi.tokenintrospection(headers, accessToken, "access_token")
-           if (response != null) {
+            if (response != null) {
                 // Checking the results
                 if(response.isSuccessful) {
                     val responseBody = response.body()
