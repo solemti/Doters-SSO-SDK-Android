@@ -84,7 +84,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     }
 
     fun userInfo(accessToken: String, callback: UserInfoCallback) {
-        val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)
+
+        val SSOApi = RetrofitHelper.getInstance("${this.apiUrlInit}/").create(SSOAPI::class.java)
 
         val headers: Map<String, String> = mapOf(
             "Authorization" to "Bearer " + accessToken,
@@ -123,7 +124,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
             "X-Channel" to "android"
         )
 
-        val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)
+        val SSOApi = RetrofitHelper.getInstance("${this.apiUrlInit}/").create(SSOAPI::class.java)
 
         GlobalScope.launch {
             val response = SSOApi.refreshToken(headers, refreshToken, "refresh_token")
@@ -158,7 +159,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
             "X-Channel" to "android"
         )
 
-        val SSOApi = RetrofitHelper.getInstance(this.apiUrlInit).create(SSOAPI::class.java)
+        val SSOApi = RetrofitHelper.getInstance("${this.apiUrlInit}/").create(SSOAPI::class.java)
 
         GlobalScope.launch {
             val response = SSOApi.tokenintrospection(headers, accessToken, "access_token")
