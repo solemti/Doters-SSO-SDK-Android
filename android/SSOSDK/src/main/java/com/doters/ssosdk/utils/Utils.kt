@@ -28,6 +28,7 @@ class Utils {
                 var scope: String = ""
                 var tokenType: String = ""
                 var state: String = ""
+                var resultCode: String = ""
 
                 if (sanitizer.getValue("access_token") != null) {
                     accessToken = sanitizer.getValue("access_token")
@@ -50,13 +51,16 @@ class Utils {
                 if (sanitizer.getValue("state") != null) {
                     state = sanitizer.getValue("state")
                 }
+                if (sanitizer.getValue("resultCode") != null) {
+                    resultCode = sanitizer.getValue("resultCode")
+                }
 
-                response = LoginData(accessToken, expiresIn.toInt(), idToken, refreshToken, scope, tokenType, state, "", "")
+                response = LoginData(accessToken, expiresIn.toInt(), idToken, refreshToken, scope, tokenType, state, resultCode, "", "")
             } catch (e: Exception) {
-                response = LoginData("", 0, "", "", "", "", "", "errorException", e.toString())
+                response = LoginData("", 0, "", "", "", "", "","", "errorException", e.toString())
             }
         } else {
-            response = LoginData("", 0, "", "", "", "", "", "URI undefined", "The URI param is required")
+            response = LoginData("", 0, "", "", "", "", "","", "URI undefined", "The URI param is required")
         }
 
         return response

@@ -8,8 +8,9 @@ data class LoginData(
     val scope:String,
     val tokenType:String,
     val state:String,
+    val resultCode:String,
     val error:String,
     val errorDescription:String
 ) {
-    constructor() : this("", 0, "", "", "", "", "", "", "")
+    constructor() : this("", 0, "", "", "", "", "", "","", "")
 }

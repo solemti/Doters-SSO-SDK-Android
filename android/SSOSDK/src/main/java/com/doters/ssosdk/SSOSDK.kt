@@ -39,7 +39,9 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     // URL para carga del SSO Logout
     private var SSO_url_logout = urlInit+"/logout?post_logout_redirect_uri="+schemeInit+"://logout&client_id="+clientIdInit
 
-    private var SSO_url_editProfile = urlInit+"/profile/edit?redirectUri="+schemeInit+"://login"
+    private var SSO_url_editProfile = urlInit+"/profile/edit?redirectUri="+schemeInit+"://editProfile"
+
+    private var SSO_url_deleteAccount = urlInit+"/user/cancel?redirectUri="+schemeInit+"://cancel&clientId=$clientIdInit&clientSecret=$clientSecretInit&originApp=true"
 
     private val sdkUtils: Utils = Utils()
 
@@ -74,8 +76,12 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         loadSSO(this.SSO_url_sign_up, context);
     }
     fun editProfile(context: Context){
-        logger.info { "Starting doters sso signUp" }
+        logger.info { "Starting doters sso editProfile" }
         loadSSO(this.SSO_url_editProfile, context);
+    }
+    fun deleteAccount(context: Context){
+        logger.info { "Starting doters sso SSO_url_deleteAccount" }
+        loadSSO(this.SSO_url_deleteAccount, context);
     }
     // Metodo de SDK para login
     fun logOut(context: Context){
@@ -135,7 +141,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
                     val refreshTokenResponse: LoginData = LoginData(responseBody?.access_token ?: "",
                         responseBody?.expires_in ?: 0,
                         responseBody?.id_token ?: "", responseBody?.refresh_token ?: "", responseBody?.scope ?: "",
-                        responseBody?.token_type ?: "", "", "", ""
+                        responseBody?.token_type ?: "", "", "","",""
                     )
 
                     callback.processFinish(true, refreshTokenResponse)
