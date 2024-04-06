@@ -173,9 +173,9 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
                 // Checking the results
                 if(response.isSuccessful) {
                     val responseBody = response.body()
-                    val subData: JSONObject = JSONObject(responseBody!!.sub)
+                    val subData = JSONObject(responseBody?.sub ?: "{}")
                     val subDataResponse: SubData = SubData(
-                        subData.get("accountId") as String, (subData.get("user") ?: "") as String
+                        (subData.optString("accountId") ?: ""), (subData.optString("user") ?: "")
                     )
                     val tokenIntrospectionDataResponse: IntrospectionData = IntrospectionData(responseBody?.active ?: false,
                         subDataResponse,
