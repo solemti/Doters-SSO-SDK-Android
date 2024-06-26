@@ -31,15 +31,15 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     private val stateInit: String = state
 
     // URL para carga del SSO Login
-    private var SSO_url =
+    private var SSO_url_login =
         "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://login&state=$stateInit"
     // URL para carga del SSO SignUp
     private var SSO_url_sign_up =
-        "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://login&go_to_page=signup&state=$stateInit"
+        "$urlInit/?clientId=$clientIdInit&clientSecret=$clientSecretInit&language=$languageInit&redirectUri="+schemeInit+"://signup&go_to_page=signup&state=$stateInit"
     // URL para carga del SSO Logout
     private var SSO_url_logout = urlInit+"/logout?post_logout_redirect_uri="+schemeInit+"://logout&client_id="+clientIdInit
 
-    private var SSO_url_editProfile = urlInit+"/profile/edit?redirectUri="+schemeInit+"://editProfile"
+    private var SSO_url_editProfile = urlInit+"/profile/edit?redirectUri="+schemeInit+"://edit"
 
     private var SSO_url_deleteAccount = urlInit+"/user/cancel?redirectUri="+schemeInit+"://cancel&clientId=$clientIdInit&clientSecret=$clientSecretInit&originApp=true"
 
@@ -69,7 +69,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     // Metodo de SDK para login
     fun signIn(context: Context){
         logger.info { "Starting doters sso login v2" }
-        loadSSO(this.SSO_url, context);
+        loadSSO(this.SSO_url_login, context);
     }
     fun signUp(context: Context){
         logger.info { "Starting doters sso signUp" }
@@ -100,22 +100,27 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         )
 
         GlobalScope.launch {
-            val response = SSOApi.getUserInfo(headers)
-            if (response != null) {
-                // Checking the results
-                if(response.isSuccessful) {
-                    val responseBody: UserInfoRequest? = response.body()
-                    val userInfoResponse: UserInfoData = UserInfoData(responseBody?.sub ?: "",
-                        responseBody?.email ?: "",
-                        responseBody?.first ?: "", responseBody?.last ?: "", responseBody?.title ?: ""
-                    )
-                    callback.processFinish(true, userInfoResponse)
-                }else {
-                    logger.error { "Request to get user info failed, " + (response.errorBody()?.string() ?: "without error info")}
+            try {
+                val response = SSOApi.getUserInfo(headers)
+                if (response != null) {
+                    // Checking the results
+                    if(response.isSuccessful) {
+                        val responseBody: UserInfoRequest? = response.body()
+                        val userInfoResponse: UserInfoData = UserInfoData(responseBody?.sub ?: "",
+                            responseBody?.email ?: "",
+                            responseBody?.first ?: "", responseBody?.last ?: "", responseBody?.title ?: ""
+                        )
+                        callback.processFinish(true, userInfoResponse)
+                    }else {
+                        logger.error { "Request to get user info failed, " + (response.errorBody()?.string() ?: "without error info")}
+                        callback.processFinish(false, null)
+                    }
+                } else {
+                    logger.error { "Request to get user info without response"}
                     callback.processFinish(false, null)
                 }
-            } else {
-                logger.error { "Request to get user info without response"}
+            } catch (e: Exception) {
+                logger.error(e) { "Exception occurred while retrieving user info" }
                 callback.processFinish(false, null)
             }
         }
@@ -133,24 +138,29 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         val SSOApi = RetrofitHelper.getInstance("${this.apiUrlInit}/").create(SSOAPI::class.java)
 
         GlobalScope.launch {
-            val response = SSOApi.refreshToken(headers, refreshToken, "refresh_token")
-            if (response != null) {
-                // Checking the results
-                if(response.isSuccessful) {
-                    val responseBody: RefreshTokenRequest? = response.body()
-                    val refreshTokenResponse: LoginData = LoginData(responseBody?.access_token ?: "",
-                        responseBody?.expires_in ?: 0,
-                        responseBody?.id_token ?: "", responseBody?.refresh_token ?: "", responseBody?.scope ?: "",
-                        responseBody?.token_type ?: "", "", "","",""
-                    )
+            try {
+                val response = SSOApi.refreshToken(headers, refreshToken, "refresh_token")
+                if (response != null) {
+                    // Checking the results
+                    if(response.isSuccessful) {
+                        val responseBody: RefreshTokenRequest? = response.body()
+                        val refreshTokenResponse: LoginData = LoginData(responseBody?.access_token ?: "",
+                            responseBody?.expires_in ?: 0,
+                            responseBody?.id_token ?: "", responseBody?.refresh_token ?: "", responseBody?.scope ?: "",
+                            responseBody?.token_type ?: "", "", "","",""
+                        )
 
-                    callback.processFinish(true, refreshTokenResponse)
+                        callback.processFinish(true, refreshTokenResponse)
+                    } else {
+                        logger.error { "Request to refresh token failed, " + (response.errorBody()?.string() ?: "without error info")}
+                        callback.processFinish(false, null)
+                    }
                 } else {
-                    logger.error { "Request to refresh token failed, " + (response.errorBody()?.string() ?: "without error info")}
+                    logger.error { "Request to refresh token without response"}
                     callback.processFinish(false, null)
                 }
-            } else {
-                logger.error { "Request to refresh token without response"}
+            } catch (e: Exception) {
+                logger.error(e) { "Exception occurred while refreshing token" }
                 callback.processFinish(false, null)
             }
         }
@@ -168,28 +178,33 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         val SSOApi = RetrofitHelper.getInstance("${this.apiUrlInit}/").create(SSOAPI::class.java)
 
         GlobalScope.launch {
-            val response = SSOApi.tokenintrospection(headers, accessToken, "access_token")
-            if (response != null) {
-                // Checking the results
-                if(response.isSuccessful) {
-                    val responseBody = response.body()
-                    val subData = JSONObject(responseBody?.sub ?: "{}")
-                    val subDataResponse: SubData = SubData(
-                        (subData.optString("accountId") ?: ""), (subData.optString("user") ?: "")
-                    )
-                    val tokenIntrospectionDataResponse: IntrospectionData = IntrospectionData(responseBody?.active ?: false,
-                        subDataResponse,
-                        responseBody?.client_id ?: "", responseBody?.exp ?: 0, responseBody?.iat ?: 0,
-                        responseBody?.iss ?: "", responseBody?.scope ?: "",
-                        responseBody?.token_type ?: ""
-                    )
-                    callback.processFinish(true, tokenIntrospectionDataResponse)
-                }else {
-                    logger.error { "Request to verify token failed, " + (response.errorBody()?.string() ?: "without error info")}
+            try {
+                val response = SSOApi.tokenintrospection(headers, accessToken, "access_token")
+                if (response != null) {
+                    // Checking the results
+                    if(response.isSuccessful) {
+                        val responseBody = response.body()
+                        val subData = JSONObject(responseBody?.sub ?: "{}")
+                        val subDataResponse: SubData = SubData(
+                            (subData.optString("accountId") ?: ""), (subData.optString("user") ?: "")
+                        )
+                        val tokenIntrospectionDataResponse: IntrospectionData = IntrospectionData(responseBody?.active ?: false,
+                            subDataResponse,
+                            responseBody?.client_id ?: "", responseBody?.exp ?: 0, responseBody?.iat ?: 0,
+                            responseBody?.iss ?: "", responseBody?.scope ?: "",
+                            responseBody?.token_type ?: ""
+                        )
+                        callback.processFinish(true, tokenIntrospectionDataResponse)
+                    }else {
+                        logger.error { "Request to verify token failed, " + (response.errorBody()?.string() ?: "without error info")}
+                        callback.processFinish(false, null)
+                    }
+                } else {
+                    logger.error { "Request to verify token without response"}
                     callback.processFinish(false, null)
                 }
-            } else {
-                logger.error { "Request to verify token without response"}
+            } catch (e: Exception) {
+                logger.error(e) { "Exception occurred while retrieving tokenIntrospection" }
                 callback.processFinish(false, null)
             }
         }
