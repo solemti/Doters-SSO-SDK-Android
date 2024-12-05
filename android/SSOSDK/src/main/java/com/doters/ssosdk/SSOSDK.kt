@@ -29,6 +29,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     private val clientIdInit: String = clientId
     private val clientSecretInit: String = clientSecret
     private val stateInit: String = state
+    private var flow: String = ""
+    private var user: String = ""
 
     // URL para carga del SSO Login
     private var SSO_url_login =
@@ -71,9 +73,17 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         logger.info { "Starting doters sso login v2" }
         loadSSO(this.SSO_url_login, context);
     }
+    fun signInSAC(context: Context){
+        logger.info { "Starting doters sso signInSAC" }
+        loadSSO(this.SSO_url_login+"&flow=$flow&user=$user", context);
+    }
     fun signUp(context: Context){
         logger.info { "Starting doters sso signUp" }
         loadSSO(this.SSO_url_sign_up, context);
+    }
+    fun signUpSAC(context: Context){
+        logger.info { "Starting doters sso signUpSAC" }
+        loadSSO(this.SSO_url_sign_up+"&flow=$flow&user=$user", context);
     }
     fun editProfile(context: Context){
         logger.info { "Starting doters sso editProfile" }
@@ -214,7 +224,10 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         return sdkUtils.parseURI(uri)
     }
 
-    // Funcion proncipal con logica para carga de customTabs
+    fun parseURISAC(uri: Uri): LoginDataSAC?{
+        return sdkUtils.parseURISAC(uri)
+    }
+
     private fun loadSSO(redirectURI: String, contexto2: Context){
         // Ejecucion de custom tabs
         contexto = contexto2
@@ -226,5 +239,11 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
         customBuilder.intent.setPackage(package_name)
         customBuilder.intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         customBuilder.launchUrl(contexto, Uri.parse(redirectURI))
+    }
+    public fun setFlow(flow: String){
+        this.flow = flow;
+    }
+    public fun setUser(user: String){
+        this.user = user;
     }
 }

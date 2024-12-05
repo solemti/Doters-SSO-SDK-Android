@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import java.util.*
 
 import com.doters.ssosdk.models.LoginData
+import com.doters.ssosdk.models.LoginDataSAC
 
 class Utils {
 
@@ -61,6 +62,55 @@ class Utils {
             }
         } else {
             response = LoginData("", 0, "", "", "", "", "","", "URI undefined", "The URI param is required")
+        }
+
+        return response
+    }
+
+    fun parseURISAC(uri: Uri?): LoginDataSAC {
+        var response = LoginDataSAC()
+
+        if(uri != null) {
+            try {
+                sanitizer.setAllowUnregisteredParamaters(true);
+                sanitizer.parseUrl(uri.toString());
+
+                var activation_code: String = ""
+                var expiresIn: String = "0"
+                var flow: String = ""
+                var sub: String = ""
+                var tokenType: String = ""
+                var state: String = ""
+                var resultCode: String = ""
+
+                if (sanitizer.getValue("activation_code") != null) {
+                    activation_code = sanitizer.getValue("activation_code")
+                }
+                if (sanitizer.getValue("expires_in") != null) {
+                    expiresIn = sanitizer.getValue("expires_in")
+                }
+                if (sanitizer.getValue("flow") != null) {
+                    flow = sanitizer.getValue("flow")
+                }
+                if (sanitizer.getValue("sub") != null) {
+                    sub = sanitizer.getValue("sub")
+                }
+                if (sanitizer.getValue("token_type") != null) {
+                    tokenType = sanitizer.getValue("token_type")
+                }
+                if (sanitizer.getValue("state") != null) {
+                    state = sanitizer.getValue("state")
+                }
+                if (sanitizer.getValue("resultCode") != null) {
+                    resultCode = sanitizer.getValue("resultCode")
+                }
+
+                response = LoginDataSAC(activation_code, expiresIn.toInt(), flow, sub, tokenType, state, resultCode, "", "")
+            } catch (e: Exception) {
+                response = LoginDataSAC("", 0, "", "", "", "", "", "errorException", e.toString())
+            }
+        } else {
+            response = LoginDataSAC("", 0, "", "", "","","", "URI undefined", "The URI param is required")
         }
 
         return response
