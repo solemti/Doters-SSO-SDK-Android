@@ -81,6 +81,7 @@ class Utils {
                 var sub: String = ""
                 var tokenType: String = ""
                 var state: String = ""
+                var activationCodeSource: String = ""
                 var resultCode: String = ""
 
                 if (sanitizer.getValue("activation_code") != null) {
@@ -101,16 +102,19 @@ class Utils {
                 if (sanitizer.getValue("state") != null) {
                     state = sanitizer.getValue("state")
                 }
+                if (sanitizer.getValue("activation_code_source") != null) {
+                    activationCodeSource = sanitizer.getValue("activation_code_source")
+                }
                 if (sanitizer.getValue("resultCode") != null) {
                     resultCode = sanitizer.getValue("resultCode")
                 }
 
-                response = LoginDataSAC(activation_code, expiresIn.toInt(), flow, sub, tokenType, state, resultCode, "", "")
+                response = LoginDataSAC(activation_code, expiresIn.toInt(), flow, sub, tokenType, state, activationCodeSource, resultCode, "", "")
             } catch (e: Exception) {
-                response = LoginDataSAC("", 0, "", "", "", "", "", "errorException", e.toString())
+                response = LoginDataSAC("", 0, "", "", "", "", "","", "errorException", e.toString())
             }
         } else {
-            response = LoginDataSAC("", 0, "", "", "","","", "URI undefined", "The URI param is required")
+            response = LoginDataSAC("", 0, "", "", "","","","", "URI undefined", "The URI param is required")
         }
 
         return response

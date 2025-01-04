@@ -7,9 +7,10 @@ data class LoginDataSAC(
     val sub:String,
     val tokenType:String,
     val state:String,
+    val activationCodeSource:String,
     val resultCode:String,
     val error:String,
     val errorDescription:String
 ) {
-    constructor() : this("", 0, "", "", "", "", "", "", "")
+    constructor() : this("", 0, "", "", "", "", "","", "", "")
 }
