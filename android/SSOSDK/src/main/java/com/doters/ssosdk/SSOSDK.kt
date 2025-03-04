@@ -31,6 +31,7 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     private val stateInit: String = state
     private var flow: String = ""
     private var user: String = ""
+    private var extendedToken: Boolean = false
 
     // URL para carga del SSO Login
     private var SSO_url_login =
@@ -71,11 +72,11 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     // Metodo de SDK para login
     fun signIn(context: Context){
         logger.info { "Starting doters sso login v2" }
-        loadSSO(this.SSO_url_login, context);
+        loadSSO(this.SSO_url_login+"&extended_token=$extendedToken", context);
     }
     fun signInSAC(context: Context){
         logger.info { "Starting doters sso signInSAC" }
-        loadSSO(this.SSO_url_login+"&flow=$flow&user=$user", context);
+        loadSSO(this.SSO_url_login+"&flow=$flow&user=$user&extended_token=$extendedToken", context);
     }
     fun signUp(context: Context){
         logger.info { "Starting doters sso signUp" }
@@ -245,5 +246,8 @@ class SSOSDK constructor(scheme: String, url: String, apiUrl: String, language: 
     }
     public fun setUser(user: String){
         this.user = user;
+    }
+    public fun setExtendedToken(extendedToken: Boolean){
+        this.extendedToken = extendedToken;
     }
 }
